@@ -1,9 +1,9 @@
 # jscomp
 Javascript compressor.
 
-Generates a JS file containing the compressed imput encoded in base64 with a light bootstrap JS code that decompresses and evals the original JS input.
+Generates a JS file containing the compressed input encoded in base64 with a light bootstrap JS code that decompresses and evals the original JS input.
 
-# Why?
+## Why?
 We needed to reduce GopherJS generated files to fit into wechat miniprogram restrictions.
 
 ## Install
