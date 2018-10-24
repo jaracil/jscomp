@@ -73,17 +73,11 @@ func main() {
 	b64str := base64.StdEncoding.EncodeToString(buf.Bytes())
 
 	fmt.Fprintf(os.Stdout,
-		`/* Compressed with jscomp */
+		`/* Compressed with jscomp [https://github.com/jaracil/jscomp.git] */
 
 %s
-
 %s
-
-var b64str = "%s";
-var inflate = new Zlib.RawInflate(base64js.toByteArray(b64str));
-var dec = new TextDecoder("utf-8")
-eval(dec.decode(inflate.decompress()));
-		 `,
+eval(new TextDecoder("utf-8").decode(new Zlib.RawInflate(base64js.toByteArray("%s")).decompress()));`,
 		base64Code,
 		inflateCode,
 		b64str,
