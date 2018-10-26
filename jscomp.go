@@ -163,7 +163,8 @@ JClaPVlbJF0scigiWmxpYi5SYXdJbmZsYXRlLkJ1ZmZlclR5cGUuIitaLFhbWl0pO30pLmNhbGwo
 dGhpcyk7Cg==`
 
 var opts struct {
-	InputFile string `short:"i" long:"input" description:"JS input file"`
+	InputFile  string `short:"i" long:"input" description:"JS input file"`
+	OutputFile string `short:"o" long:"output" default:"-" description:"JS output file"`
 }
 
 func genCode(s string) string {
@@ -208,13 +209,28 @@ func main() {
 	}
 	err = def.Flush()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error flushing data: %#v\n", err)
+		fmt.Fprintf(os.Stderr, "Error flushing deflate data: %#v\n", err)
 		return
 	}
-	def.Close()
+	err = def.Close()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error closing deflate: %#v\n", err)
+		return
+	}
 	b64str := base64.StdEncoding.EncodeToString(buf.Bytes())
 
-	fmt.Fprintf(os.Stdout,
+	var outFile *os.File
+	if opts.OutputFile == "-" {
+		outFile = os.Stdout
+	} else {
+		outFile, err = os.OpenFile(opts.OutputFile, os.O_WRONLY|os.O_CREATE, 0644)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error creating output file: %#v\n", err)
+			return
+		}
+	}
+
+	fmt.Fprintf(outFile,
 		`/* Compressed with jscomp [https://github.com/jaracil/jscomp.git] */
 
 %s
@@ -224,5 +240,5 @@ eval(new TextDecoder("utf-8").decode(new Zlib.RawInflate(base64js.toByteArray("%
 		genCode(inflateCode),
 		b64str,
 	)
-
+	outFile.Close()
 }
