@@ -223,7 +223,7 @@ func main() {
 	if opts.OutputFile == "-" {
 		outFile = os.Stdout
 	} else {
-		outFile, err = os.OpenFile(opts.OutputFile, os.O_WRONLY|os.O_CREATE, 0644)
+		outFile, err = os.OpenFile(opts.OutputFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error creating output file: %#v\n", err)
 			return
